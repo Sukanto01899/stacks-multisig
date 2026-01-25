@@ -266,16 +266,16 @@
     )
     (let (
             (hash (get hash accumulator))
-            (signers (get signers accumulator))
+            (signer-list (get signers accumulator))
             (count (get count accumulator))
             (signer (extract-signer hash signature))
         )
         (if (is-ok signer)
             (let ((signer-principal (unwrap-panic signer)))
-                (if (is-some (index-of signers signer-principal))
+                (if (is-some (index-of signer-list signer-principal))
                     accumulator
                     (merge accumulator {
-                        signers: (append signers (list signer-principal)),
+                        signers: (unwrap-panic (as-max-len? (append signer-list signer-principal) u100)),
                         count: (+ count u1),
                     })
                 )
@@ -306,7 +306,7 @@
         (let ((seen (get seen accumulator)))
             (if (is-some (index-of seen item))
                 (merge accumulator { has-dup: true })
-                (merge accumulator { seen: (append seen (list item)) })
+                (merge accumulator { seen: (unwrap-panic (as-max-len? (append seen item) u100)) })
             )
         )
     )

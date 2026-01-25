@@ -7,9 +7,9 @@ interface to simulate signer approvals and transaction execution flow.
 
 ## What is included
 
-- `contracts/multisig.clar`: multisig contract with signer set, threshold,
+- `contracts/multisig-v3.clar`: multisig contract with signer set, threshold,
   transaction submission, and execution for STX or SIP-010 transfers.
-- `contracts/mock-token.clar`: SIP-010 compliant token used by tests.
+- `contracts/mock-token-v3.clar`: SIP-010 compliant token used by tests.
 - `tests/*.test.ts`: Clarinet-based tests for initialization, submission,
   signature validation, and execution paths.
 - `frontend/`: static HTML/CSS/JS interface that models the multisig workflow.

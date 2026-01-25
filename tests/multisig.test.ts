@@ -20,8 +20,8 @@ const bob = getAddressFromPrivateKey(bobPrivateKey, "mocknet");
 const charlie = getAddressFromPrivateKey(charliePrivateKey, "mocknet");
 
 // Get the contract principals for the token and multisig contracts
-const token = Cl.contractPrincipal(deployer, "mock-token");
-const multisig = Cl.contractPrincipal(deployer, "multisig");
+const token = Cl.contractPrincipal(deployer, "mock-token-v3");
+const multisig = Cl.contractPrincipal(deployer, "multisig-v3");
 
 describe("Multisig Tests", () => {
   beforeEach(() => {
@@ -29,8 +29,8 @@ describe("Multisig Tests", () => {
 
     for (const account of allAccounts) {
       const mintResultOne = simnet.callPublicFn(
-        "mock-token",
-        "mint",
+      "mock-token-v3",
+      "mint",
         [Cl.uint(1_000_000_000), Cl.principal(account)],
         account
       );
@@ -43,7 +43,7 @@ describe("Multisig Tests", () => {
 
   it("allows initializing the multisig", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -58,21 +58,21 @@ describe("Multisig Tests", () => {
 
     expect(initializeResult.result).toStrictEqual(Cl.ok(Cl.bool(true)));
 
-    const signers = simnet.getDataVar("multisig", "signers");
+    const signers = simnet.getDataVar("multisig-v3", "signers");
     expect(signers).toEqual(
       Cl.list([Cl.principal(alice), Cl.principal(bob), Cl.principal(charlie)])
     );
 
-    const threshold = simnet.getDataVar("multisig", "threshold");
+    const threshold = simnet.getDataVar("multisig-v3", "threshold");
     expect(threshold).toEqual(Cl.uint(2));
 
-    const initialized = simnet.getDataVar("multisig", "initialized");
+    const initialized = simnet.getDataVar("multisig-v3", "initialized");
     expect(initialized).toEqual(Cl.bool(true));
   });
 
   it("only allows deployer to initialize the multisig", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -90,7 +90,7 @@ describe("Multisig Tests", () => {
 
   it("does not allow initializing the multisig if it is already initialized", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -106,7 +106,7 @@ describe("Multisig Tests", () => {
     expect(initializeResult.result).toStrictEqual(Cl.ok(Cl.bool(true)));
 
     const initializeResultTwo = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -124,7 +124,7 @@ describe("Multisig Tests", () => {
 
   it("does not allow initializing the multisig if the threshold is too low", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -142,7 +142,7 @@ describe("Multisig Tests", () => {
 
   it("does not allow initializing if threshold exceeds signer count", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [Cl.list([Cl.principal(alice), Cl.principal(bob)]), Cl.uint(3)],
       deployer
@@ -153,7 +153,7 @@ describe("Multisig Tests", () => {
 
   it("does not allow initializing with duplicate signers", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -171,7 +171,7 @@ describe("Multisig Tests", () => {
 
   it("allows any of the signers to submit a transaction", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -187,9 +187,9 @@ describe("Multisig Tests", () => {
     expect(initializeResult.result).toStrictEqual(Cl.ok(Cl.bool(true)));
 
     for (const signer of [alice, bob, charlie]) {
-      const expectedTxnId = simnet.getDataVar("multisig", "txn-id");
+      const expectedTxnId = simnet.getDataVar("multisig-v3", "txn-id");
       const submitResult = simnet.callPublicFn(
-        "multisig",
+        "multisig-v3",
         "submit-txn",
         [Cl.uint(0), Cl.uint(100), Cl.principal(signer), Cl.none()],
         signer
@@ -201,7 +201,7 @@ describe("Multisig Tests", () => {
 
   it("does not allow a non-signer to submit a transaction", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -217,7 +217,7 @@ describe("Multisig Tests", () => {
     expect(initializeResult.result).toStrictEqual(Cl.ok(Cl.bool(true)));
 
     const submitResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "submit-txn",
       [Cl.uint(0), Cl.uint(100), Cl.principal(alice), Cl.none()],
       deployer
@@ -229,7 +229,7 @@ describe("Multisig Tests", () => {
   it("can submit a STX transfer transaction", () => {
     // Initialize the multisig
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -245,7 +245,7 @@ describe("Multisig Tests", () => {
 
     // Submit a transaction
     const submitResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "submit-txn",
       [Cl.uint(0), Cl.uint(100), Cl.principal(alice), Cl.none()],
       alice
@@ -263,7 +263,7 @@ describe("Multisig Tests", () => {
 
     // Hash the transaction
     const txnHash = simnet.callReadOnlyFn(
-      "multisig",
+      "multisig-v3",
       "hash-txn",
       [Cl.uint(0)],
       deployer
@@ -282,7 +282,7 @@ describe("Multisig Tests", () => {
 
     // Execute the transaction
     const executeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "execute-stx-transfer-txn",
       [
         Cl.uint(0),
@@ -297,7 +297,7 @@ describe("Multisig Tests", () => {
     expect(executeResult.events.length).toEqual(2); // one stx_transfer and one print
 
     const reexecuteResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "execute-stx-transfer-txn",
       [
         Cl.uint(0),
@@ -313,7 +313,7 @@ describe("Multisig Tests", () => {
 
   it("can submit a SIP-010 transfer transaction", () => {
     const initializeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "initialize",
       [
         Cl.list([
@@ -329,7 +329,7 @@ describe("Multisig Tests", () => {
     expect(initializeResult.result).toStrictEqual(Cl.ok(Cl.bool(true)));
 
     const submitResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "submit-txn",
       [Cl.uint(1), Cl.uint(100), Cl.principal(alice), Cl.some(token)],
       alice
@@ -339,7 +339,7 @@ describe("Multisig Tests", () => {
 
     // send some token to the multisig
     const sendResult = simnet.callPublicFn(
-      "mock-token",
+      "mock-token-v3",
       "transfer",
       [Cl.uint(100), Cl.principal(alice), multisig, Cl.none()],
       alice
@@ -347,7 +347,7 @@ describe("Multisig Tests", () => {
     expect(sendResult.result).toStrictEqual(Cl.ok(Cl.bool(true)));
 
     const balance = simnet.callReadOnlyFn(
-      "mock-token",
+      "mock-token-v3",
       "get-balance",
       [multisig],
       deployer
@@ -355,7 +355,7 @@ describe("Multisig Tests", () => {
     expect(balance.result).toStrictEqual(Cl.ok(Cl.uint(100)));
 
     const txnHash = simnet.callReadOnlyFn(
-      "multisig",
+      "multisig-v3",
       "hash-txn",
       [Cl.uint(0)],
       deployer
@@ -372,7 +372,7 @@ describe("Multisig Tests", () => {
     });
 
     const executeResult = simnet.callPublicFn(
-      "multisig",
+      "multisig-v3",
       "execute-token-transfer-txn",
       [
         Cl.uint(0),
@@ -388,7 +388,7 @@ describe("Multisig Tests", () => {
     expect(executeResult.events.length).toEqual(2); // one ft_transfer and one print
 
     const newBalance = simnet.callReadOnlyFn(
-      "mock-token",
+      "mock-token-v3",
       "get-balance",
       [multisig],
       deployer

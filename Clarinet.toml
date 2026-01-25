@@ -7,13 +7,13 @@ cache_dir = './.cache'
 
 [[project.requirements]]
 contract_id = 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard'
-[contracts.mock-token]
-path = 'contracts/mock-token.clar'
+[contracts.mock-token-v3]
+path = 'contracts/mock-token-v3.clar'
 clarity_version = 3
 epoch = 3.1
 
-[contracts.multisig]
-path = 'contracts/multisig.clar'
+[contracts.multisig-v3]
+path = 'contracts/multisig-v3.clar'
 clarity_version = 3
 epoch = 3.1
 [repl.analysis]
