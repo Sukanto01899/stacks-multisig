@@ -1,114 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Stacks Multisig Demo</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>frontend</title>
   </head>
   <body>
-    <main class="page">
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Stacks Multisig</p>
-          <h1>Approve transfers with shared intent.</h1>
-          <p class="lead">
-            A lightweight frontend demo that simulates signer votes and
-            execution rules. Wire it to your contract when ready.
-          </p>
-        </div>
-        <div class="hero-card">
-          <div class="metric">
-            <span>Threshold</span>
-            <strong id="threshold-display">2 of 3</strong>
-          </div>
-          <div class="metric">
-            <span>Pending txns</span>
-            <strong id="pending-count">0</strong>
-          </div>
-          <p class="note">
-            Demo only. No blockchain calls yet.
-          </p>
-        </div>
-      </section>
-
-      <section class="grid">
-        <article class="panel">
-          <h2>Signers and rules</h2>
-          <form id="signer-form" class="stack">
-            <label>
-              Add signer address
-              <div class="row">
-                <input
-                  id="signer-input"
-                  type="text"
-                  placeholder="ST2J8... or alias"
-                  required
-                />
-                <button type="submit">Add</button>
-              </div>
-            </label>
-          </form>
-          <label class="stack">
-            Threshold
-            <input id="threshold-input" type="number" min="1" value="2" />
-          </label>
-          <ul id="signer-list" class="chip-list"></ul>
-        </article>
-
-        <article class="panel">
-          <h2>Submit transaction</h2>
-          <form id="txn-form" class="stack">
-            <label>
-              Transfer type
-              <select id="txn-type">
-                <option value="stx">STX transfer</option>
-                <option value="sip010">SIP-010 token</option>
-              </select>
-            </label>
-            <label>
-              Amount
-              <input id="txn-amount" type="number" min="1" value="100" />
-            </label>
-            <label>
-              Recipient
-              <input
-                id="txn-recipient"
-                type="text"
-                placeholder="ST3X..."
-                required
-              />
-            </label>
-            <label>
-              Token contract (optional)
-              <input id="txn-token" type="text" placeholder="token contract" />
-            </label>
-            <button type="submit" class="primary">Queue transaction</button>
-          </form>
-        </article>
-      </section>
-
-      <section class="panel wide">
-        <div class="panel-header">
-          <h2>Pending transactions</h2>
-          <div class="row">
-            <label>
-              Sign as
-              <select id="signer-select"></select>
-            </label>
-            <button id="sign-txn" type="button">Sign selected</button>
-          </div>
-        </div>
-        <div id="txn-list" class="txn-list"></div>
-      </section>
-    </main>
-
-    <script src="app.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
