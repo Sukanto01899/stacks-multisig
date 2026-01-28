@@ -133,14 +133,6 @@
     )
     (let (
             (transaction (unwrap! (map-get? transactions { id: id }) ERR_INVALID_TXN_ID))
-            (transaction-hash (hash-txn id))
-            (total-unique-valid-signatures (get count
-                (fold count-valid-unique-signature signatures {
-                    hash: transaction-hash,
-                    signers: (list),
-                    count: u0,
-                })
-            ))
             (txn-type (get type transaction))
             (amount (get amount transaction))
             (recipient (get recipient transaction))
@@ -150,26 +142,37 @@
         (asserts! (is-some (index-of (var-get signers) tx-sender))
             ERR_NOT_A_SIGNER
         )
-        (asserts! (>= (len signatures) (var-get threshold))
-            ERR_MIN_THRESHOLD_NOT_MET
-        )
-        (asserts! (>= total-unique-valid-signatures (var-get threshold))
-            ERR_MIN_THRESHOLD_NOT_MET
-        )
         (asserts! (is-eq executed false) ERR_ALREADY_EXECUTED)
-        (asserts! (is-eq txn-type u1) ERR_INVALID_TX_TYPE)
-        (asserts! (is-some token-principal) ERR_INVALID_TX_TYPE)
-        (asserts! (is-eq (unwrap-panic token-principal) (contract-of token))
-            ERR_INVALID_TOKEN_CONTRACT
+        (let (
+                (transaction-hash (hash-txn id))
+                (total-unique-valid-signatures (get count
+                    (fold count-valid-unique-signature signatures {
+                        hash: transaction-hash,
+                        signers: (list),
+                        count: u0,
+                    })
+                ))
+            )
+            (asserts! (>= (len signatures) (var-get threshold))
+                ERR_MIN_THRESHOLD_NOT_MET
+            )
+            (asserts! (>= total-unique-valid-signatures (var-get threshold))
+                ERR_MIN_THRESHOLD_NOT_MET
+            )
+            (asserts! (is-eq txn-type u1) ERR_INVALID_TX_TYPE)
+            (asserts! (is-some token-principal) ERR_INVALID_TX_TYPE)
+            (asserts! (is-eq (unwrap-panic token-principal) (contract-of token))
+                ERR_INVALID_TOKEN_CONTRACT
+            )
+            (try! (as-contract (contract-call? token transfer amount tx-sender recipient none)))
+            (map-set transactions { id: id } (merge transaction { executed: true }))
+            (print {
+                action: "execute-token-transfer-txn",
+                id: id,
+                signatures: signatures,
+            })
+            (ok true)
         )
-        (try! (as-contract (contract-call? token transfer amount tx-sender recipient none)))
-        (map-set transactions { id: id } (merge transaction { executed: true }))
-        (print {
-            action: "execute-token-transfer-txn",
-            id: id,
-            signatures: signatures,
-        })
-        (ok true)
     )
 )
 
@@ -185,14 +188,6 @@
     )
     (let (
             (transaction (unwrap! (map-get? transactions { id: id }) ERR_INVALID_TXN_ID))
-            (transaction-hash (hash-txn id))
-            (total-unique-valid-signatures (get count
-                (fold count-valid-unique-signature signatures {
-                    hash: transaction-hash,
-                    signers: (list),
-                    count: u0,
-                })
-            ))
             (txn-type (get type transaction))
             (amount (get amount transaction))
             (recipient (get recipient transaction))
@@ -201,22 +196,33 @@
         (asserts! (is-some (index-of (var-get signers) tx-sender))
             ERR_NOT_A_SIGNER
         )
-        (asserts! (>= (len signatures) (var-get threshold))
-            ERR_MIN_THRESHOLD_NOT_MET
-        )
-        (asserts! (>= total-unique-valid-signatures (var-get threshold))
-            ERR_MIN_THRESHOLD_NOT_MET
-        )
         (asserts! (is-eq executed false) ERR_ALREADY_EXECUTED)
-        (asserts! (is-eq txn-type u0) ERR_INVALID_TX_TYPE)
-        (try! (as-contract (stx-transfer? amount tx-sender recipient)))
-        (map-set transactions { id: id } (merge transaction { executed: true }))
-        (print {
-            action: "execute-stx-transfer-txn",
-            id: id,
-            signatures: signatures,
-        })
-        (ok true)
+        (let (
+                (transaction-hash (hash-txn id))
+                (total-unique-valid-signatures (get count
+                    (fold count-valid-unique-signature signatures {
+                        hash: transaction-hash,
+                        signers: (list),
+                        count: u0,
+                    })
+                ))
+            )
+            (asserts! (>= (len signatures) (var-get threshold))
+                ERR_MIN_THRESHOLD_NOT_MET
+            )
+            (asserts! (>= total-unique-valid-signatures (var-get threshold))
+                ERR_MIN_THRESHOLD_NOT_MET
+            )
+            (asserts! (is-eq txn-type u0) ERR_INVALID_TX_TYPE)
+            (try! (as-contract (stx-transfer? amount tx-sender recipient)))
+            (map-set transactions { id: id } (merge transaction { executed: true }))
+            (print {
+                action: "execute-stx-transfer-txn",
+                id: id,
+                signatures: signatures,
+            })
+            (ok true)
+        )
     )
 )
 
