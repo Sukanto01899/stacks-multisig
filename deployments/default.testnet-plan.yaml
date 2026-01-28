@@ -10,9 +10,9 @@ plan:
       transactions:
         - requirement-publish:
             contract-id: SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard
-            remap-sender: ST1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXVPSAX13
+            remap-sender: ST1K2XGT5RNGT42N49BH936VDF8NXWNZJY0N432CM
             remap-principals:
-              SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE: ST1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXVPSAX13
+              SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE: ST1K2XGT5RNGT42N49BH936VDF8NXWNZJY0N432CM
             cost: 8400
             path: ".\\.cache\\requirements\\SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.clar"
             clarity-version: 1
@@ -21,15 +21,15 @@ plan:
       transactions:
         - contract-publish:
             contract-name: mock-token-v3
-            expected-sender: ST1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXVPSAX13
-            cost: 1041488
+            expected-sender: ST1K2XGT5RNGT42N49BH936VDF8NXWNZJY0N432CM
+            cost: 11810
             path: "contracts\\mock-token-v3.clar"
             anchor-block-only: true
             clarity-version: 3
         - contract-publish:
             contract-name: multisig-v3
-            expected-sender: ST1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXVPSAX13
-            cost: 1050512
+            expected-sender: ST1K2XGT5RNGT42N49BH936VDF8NXWNZJY0N432CM
+            cost: 111900
             path: "contracts\\multisig-v3.clar"
             anchor-block-only: true
             clarity-version: 3

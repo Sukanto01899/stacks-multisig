@@ -10,14 +10,14 @@ plan:
       transactions:
         - contract-publish:
             contract-name: mock-token-v3
-            expected-sender: SP1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXRCD0S3K
+            expected-sender: SP1K2XGT5RNGT42N49BH936VDF8NXWNZJY15BPV4F
             cost: 11810
             path: "contracts\\mock-token-v3.clar"
             anchor-block-only: true
             clarity-version: 3
         - contract-publish:
             contract-name: multisig-v3
-            expected-sender: SP1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXRCD0S3K
+            expected-sender: SP1K2XGT5RNGT42N49BH936VDF8NXWNZJY15BPV4F
             cost: 111900
             path: "contracts\\multisig-v3.clar"
             anchor-block-only: true
