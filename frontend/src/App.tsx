@@ -154,11 +154,11 @@ function App() {
 
   const ensureContractReady = () => {
     if (!contractAddress || !contractName) {
-      setError("Contract address and name are required.");
+      setError("Contract address and name are required");
       return false;
     }
     if (!userData) {
-      setError("Connect a wallet first.");
+      setError("Connect a wallet first");
       return false;
     }
     return true;
