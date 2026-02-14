@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from "react";
 import {
   AppConfig,
   UserSession,
   showConnect,
   openContractCall,
-} from '@stacks/connect'
+} from "@stacks/connect";
 import {
   AnchorMode,
   PostConditionMode,
@@ -17,121 +17,121 @@ import {
   principalCV,
   someCV,
   uintCV,
-} from '@stacks/transactions'
-import { createNetwork, networkFromName } from '@stacks/network'
-import './App.css'
+} from "@stacks/transactions";
+import { createNetwork, networkFromName } from "@stacks/network";
+import "./App.css";
 
-type NetworkMode = 'mainnet' | 'testnet' | 'devnet'
+type NetworkMode = "mainnet" | "testnet" | "devnet";
 
-const appConfig = new AppConfig(['store_write', 'publish_data'])
-const userSession = new UserSession({ appConfig })
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+const userSession = new UserSession({ appConfig });
 
 const appDetails = {
-  name: 'Stacks Multisig',
-  icon: 'https://stacks.co/favicon.ico',
-}
+  name: "Stacks Multisig",
+  icon: "https://stacks.co/favicon.ico",
+};
 
-const defaultContractName = 'multisig-v3'
-const defaultTokenName = 'mock-token-v3'
+const defaultContractName = "multisig-v4";
+const defaultTokenName = "mock-token-v4";
 
 const normalizeLines = (value: string) =>
   value
     .split(/[\n,]/g)
     .map((item) => item.trim())
-    .filter(Boolean)
+    .filter(Boolean);
 
 const hexToBytes = (hex: string) => {
-  const clean = hex.replace(/^0x/i, '').trim()
+  const clean = hex.replace(/^0x/i, "").trim();
   if (!/^[\da-fA-F]+$/.test(clean) || clean.length % 2 !== 0) {
-    return null
+    return null;
   }
-  const bytes = new Uint8Array(clean.length / 2)
+  const bytes = new Uint8Array(clean.length / 2);
   for (let i = 0; i < clean.length; i += 2) {
-    bytes[i / 2] = Number.parseInt(clean.slice(i, i + 2), 16)
+    bytes[i / 2] = Number.parseInt(clean.slice(i, i + 2), 16);
   }
-  return bytes
-}
+  return bytes;
+};
 
 function App() {
   const [userData, setUserData] = useState<null | ReturnType<
     typeof userSession.loadUserData
-  >>(null)
-  const [sessionReady, setSessionReady] = useState(false)
-  const [networkMode, setNetworkMode] = useState<NetworkMode>('mainnet')
-  const [apiUrl, setApiUrl] = useState('http://localhost:3999')
+  >>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [networkMode, setNetworkMode] = useState<NetworkMode>("mainnet");
+  const [apiUrl, setApiUrl] = useState("http://localhost:3999");
   const [contractAddress, setContractAddress] = useState(
-    'SP1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXRCD0S3K'
-  )
-  const [contractName, setContractName] = useState(defaultContractName)
+    "SP1K2XGT5RNGT42N49BH936VDF8NXWNZJY15BPV4F",
+  );
+  const [contractName, setContractName] = useState(defaultContractName);
   const [tokenAddress, setTokenAddress] = useState(
-    'SP1G4ZDXED8XM2XJ4Q4GJ7F4PG4EJQ1KKXRCD0S3K'
-  )
-  const [tokenName, setTokenName] = useState(defaultTokenName)
+    "SP1K2XGT5RNGT42N49BH936VDF8NXWNZJY15BPV4F",
+  );
+  const [tokenName, setTokenName] = useState(defaultTokenName);
 
-  const [initSigners, setInitSigners] = useState('')
-  const [initThreshold, setInitThreshold] = useState('2')
+  const [initSigners, setInitSigners] = useState("");
+  const [initThreshold, setInitThreshold] = useState("2");
 
-  const [submitType, setSubmitType] = useState<'0' | '1'>('0')
-  const [submitAmount, setSubmitAmount] = useState('')
-  const [submitRecipient, setSubmitRecipient] = useState('')
+  const [submitType, setSubmitType] = useState<"0" | "1">("0");
+  const [submitAmount, setSubmitAmount] = useState("");
+  const [submitRecipient, setSubmitRecipient] = useState("");
 
-  const [executeId, setExecuteId] = useState('')
-  const [executeSignatures, setExecuteSignatures] = useState('')
+  const [executeId, setExecuteId] = useState("");
+  const [executeSignatures, setExecuteSignatures] = useState("");
 
-  const [tokenExecuteId, setTokenExecuteId] = useState('')
-  const [tokenExecuteSignatures, setTokenExecuteSignatures] = useState('')
+  const [tokenExecuteId, setTokenExecuteId] = useState("");
+  const [tokenExecuteSignatures, setTokenExecuteSignatures] = useState("");
 
-  const [hashTxnId, setHashTxnId] = useState('')
-  const [hashTxnResult, setHashTxnResult] = useState('')
+  const [hashTxnId, setHashTxnId] = useState("");
+  const [hashTxnResult, setHashTxnResult] = useState("");
 
-  const [status, setStatus] = useState('')
-  const [error, setError] = useState('')
+  const [status, setStatus] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const resumeSession = async () => {
       try {
         if (userSession.isSignInPending()) {
-          await userSession.handlePendingSignIn()
+          await userSession.handlePendingSignIn();
         }
         if (userSession.isUserSignedIn()) {
-          setUserData(userSession.loadUserData())
+          setUserData(userSession.loadUserData());
         }
       } catch (caught) {
-        console.warn('Failed to restore session', caught)
-        setUserData(null)
+        console.warn("Failed to restore session", caught);
+        setUserData(null);
       } finally {
-        setSessionReady(true)
+        setSessionReady(true);
       }
-    }
-    resumeSession()
-  }, [])
+    };
+    resumeSession();
+  }, []);
 
   const network = useMemo(() => {
-    if (networkMode === 'devnet') {
-      return createNetwork({ network: 'devnet', client: { baseUrl: apiUrl } })
+    if (networkMode === "devnet") {
+      return createNetwork({ network: "devnet", client: { baseUrl: apiUrl } });
     }
-    return networkFromName(networkMode)
-  }, [networkMode, apiUrl])
+    return networkFromName(networkMode);
+  }, [networkMode, apiUrl]);
 
   const addressForNetwork = (mode: NetworkMode) => {
-    if (!userData) return ''
-    const addresses = userData.profile?.stxAddress || {}
-    if (mode === 'mainnet') return addresses.mainnet || ''
-    return addresses.testnet || ''
-  }
+    if (!userData) return "";
+    const addresses = userData.profile?.stxAddress || {};
+    if (mode === "mainnet") return addresses.mainnet || "";
+    return addresses.testnet || "";
+  };
 
   const connectWallet = () => {
-    setError('')
+    setError("");
     if (sessionReady) {
       try {
         if (userSession.isUserSignedIn()) {
-          setUserData(userSession.loadUserData())
-          return
+          setUserData(userSession.loadUserData());
+          return;
         }
       } catch (caught) {
-        console.warn('Session data invalid, clearing storage.', caught)
+        console.warn("Session data invalid, clearing storage.", caught);
         try {
-          userSession.signUserOut(window.location.origin)
+          userSession.signUserOut(window.location.origin);
         } catch {
           // ignore
         }
@@ -141,158 +141,158 @@ function App() {
       userSession,
       appDetails,
       onFinish: () => {
-        setUserData(userSession.loadUserData())
+        setUserData(userSession.loadUserData());
       },
-      onCancel: () => setStatus('Wallet connection canceled.'),
-    })
-  }
+      onCancel: () => setStatus("Wallet connection canceled."),
+    });
+  };
 
   const disconnectWallet = () => {
-    userSession.signUserOut(window.location.origin)
-    setUserData(null)
-  }
+    userSession.signUserOut(window.location.origin);
+    setUserData(null);
+  };
 
   const ensureContractReady = () => {
     if (!contractAddress || !contractName) {
-      setError('Contract address and name are required.')
-      return false
+      setError("Contract address and name are required.");
+      return false;
     }
     if (!userData) {
-      setError('Connect a wallet first.')
-      return false
+      setError("Connect a wallet first.");
+      return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const handleInitialize = async () => {
-    if (!ensureContractReady()) return
-    const signers = normalizeLines(initSigners)
+    if (!ensureContractReady()) return;
+    const signers = normalizeLines(initSigners);
     if (!signers.length) {
-      setError('Add at least one signer principal.')
-      return
+      setError("Add at least one signer principal.");
+      return;
     }
     if (!initThreshold) {
-      setError('Threshold is required.')
-      return
+      setError("Threshold is required.");
+      return;
     }
-    const signersCV = listCV(signers.map((signer) => principalCV(signer)))
-    const args = [signersCV, uintCV(BigInt(initThreshold))]
-    setError('')
-    setStatus('Opening wallet for initialize...')
+    const signersCV = listCV(signers.map((signer) => principalCV(signer)));
+    const args = [signersCV, uintCV(BigInt(initThreshold))];
+    setError("");
+    setStatus("Opening wallet for initialize...");
     openContractCall({
       contractAddress,
       contractName,
-      functionName: 'initialize',
+      functionName: "initialize",
       functionArgs: args,
       network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
-        setStatus(`Initialize submitted: ${data.txId}`)
+        setStatus(`Initialize submitted: ${data.txId}`);
       },
-      onCancel: () => setStatus('Initialize canceled.'),
-    })
-  }
+      onCancel: () => setStatus("Initialize canceled."),
+    });
+  };
 
   const handleSubmitTxn = () => {
-    if (!ensureContractReady()) return
+    if (!ensureContractReady()) return;
     if (!submitAmount || !submitRecipient) {
-      setError('Amount and recipient are required.')
-      return
+      setError("Amount and recipient are required.");
+      return;
     }
-    const isTokenTransfer = submitType === '1'
+    const isTokenTransfer = submitType === "1";
     if (isTokenTransfer && (!tokenAddress || !tokenName)) {
-      setError('Token address and name are required for SIP-010 transfers.')
-      return
+      setError("Token address and name are required for SIP-010 transfers.");
+      return;
     }
-    const typeCV = uintCV(BigInt(submitType))
-    const amountCV = uintCV(BigInt(submitAmount))
-    const recipientCV = principalCV(submitRecipient)
+    const typeCV = uintCV(BigInt(submitType));
+    const amountCV = uintCV(BigInt(submitAmount));
+    const recipientCV = principalCV(submitRecipient);
     const tokenCV = isTokenTransfer
       ? someCV(contractPrincipalCV(tokenAddress, tokenName))
-      : noneCV()
+      : noneCV();
 
-    setError('')
-    setStatus('Opening wallet for submit-txn...')
+    setError("");
+    setStatus("Opening wallet for submit-txn...");
     openContractCall({
       contractAddress,
       contractName,
-      functionName: 'submit-txn',
+      functionName: "submit-txn",
       functionArgs: [typeCV, amountCV, recipientCV, tokenCV],
       network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
-        setStatus(`Transaction submitted: ${data.txId}`)
+        setStatus(`Transaction submitted: ${data.txId}`);
       },
-      onCancel: () => setStatus('Submit canceled.'),
-    })
-  }
+      onCancel: () => setStatus("Submit canceled."),
+    });
+  };
 
   const parseSignatures = (value: string) => {
-    const sigs = normalizeLines(value)
-    if (!sigs.length) return []
-    const buffers: Uint8Array[] = []
+    const sigs = normalizeLines(value);
+    if (!sigs.length) return [];
+    const buffers: Uint8Array[] = [];
     for (const sig of sigs) {
-      const bytes = hexToBytes(sig)
+      const bytes = hexToBytes(sig);
       if (!bytes) {
-        setError('Signatures must be hex strings.')
-        return null
+        setError("Signatures must be hex strings.");
+        return null;
       }
       if (bytes.length !== 65) {
-        setError('Each signature must be 65 bytes.')
-        return null
+        setError("Each signature must be 65 bytes.");
+        return null;
       }
-      buffers.push(bytes)
+      buffers.push(bytes);
     }
-    return buffers
-  }
+    return buffers;
+  };
 
   const handleExecuteStx = () => {
-    if (!ensureContractReady()) return
+    if (!ensureContractReady()) return;
     if (!executeId) {
-      setError('Transaction id is required.')
-      return
+      setError("Transaction id is required.");
+      return;
     }
-    const signatures = parseSignatures(executeSignatures)
-    if (!signatures) return
-    const signaturesCV = listCV(signatures.map((sig) => bufferCV(sig)))
-    setError('')
-    setStatus('Opening wallet for STX execution...')
+    const signatures = parseSignatures(executeSignatures);
+    if (!signatures) return;
+    const signaturesCV = listCV(signatures.map((sig) => bufferCV(sig)));
+    setError("");
+    setStatus("Opening wallet for STX execution...");
     openContractCall({
       contractAddress,
       contractName,
-      functionName: 'execute-stx-transfer-txn',
+      functionName: "execute-stx-transfer-txn",
       functionArgs: [uintCV(BigInt(executeId)), signaturesCV],
       network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
-        setStatus(`Execute STX submitted: ${data.txId}`)
+        setStatus(`Execute STX submitted: ${data.txId}`);
       },
-      onCancel: () => setStatus('Execute STX canceled.'),
-    })
-  }
+      onCancel: () => setStatus("Execute STX canceled."),
+    });
+  };
 
   const handleExecuteToken = () => {
-    if (!ensureContractReady()) return
+    if (!ensureContractReady()) return;
     if (!tokenExecuteId) {
-      setError('Transaction id is required.')
-      return
+      setError("Transaction id is required.");
+      return;
     }
     if (!tokenAddress || !tokenName) {
-      setError('Token address and name are required.')
-      return
+      setError("Token address and name are required.");
+      return;
     }
-    const signatures = parseSignatures(tokenExecuteSignatures)
-    if (!signatures) return
-    const signaturesCV = listCV(signatures.map((sig) => bufferCV(sig)))
-    setError('')
-    setStatus('Opening wallet for token execution...')
+    const signatures = parseSignatures(tokenExecuteSignatures);
+    if (!signatures) return;
+    const signaturesCV = listCV(signatures.map((sig) => bufferCV(sig)));
+    setError("");
+    setStatus("Opening wallet for token execution...");
     openContractCall({
       contractAddress,
       contractName,
-      functionName: 'execute-token-transfer-txn',
+      functionName: "execute-token-transfer-txn",
       functionArgs: [
         uintCV(BigInt(tokenExecuteId)),
         contractPrincipalCV(tokenAddress, tokenName),
@@ -302,44 +302,46 @@ function App() {
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Deny,
       onFinish: (data) => {
-        setStatus(`Execute token submitted: ${data.txId}`)
+        setStatus(`Execute token submitted: ${data.txId}`);
       },
-      onCancel: () => setStatus('Execute token canceled.'),
-    })
-  }
+      onCancel: () => setStatus("Execute token canceled."),
+    });
+  };
 
   const handleHashTxn = async () => {
     if (!contractAddress || !contractName) {
-      setError('Contract address and name are required.')
-      return
+      setError("Contract address and name are required.");
+      return;
     }
     if (!hashTxnId) {
-      setError('Transaction id is required.')
-      return
+      setError("Transaction id is required.");
+      return;
     }
-    setError('')
-    setStatus('Fetching transaction hash...')
+    setError("");
+    setStatus("Fetching transaction hash...");
     const senderAddress =
-      addressForNetwork(networkMode) || contractAddress || 'ST000000000000000000002AMW42H'
+      addressForNetwork(networkMode) ||
+      contractAddress ||
+      "ST000000000000000000002AMW42H";
     try {
       const result = await fetchCallReadOnlyFunction({
         contractAddress,
         contractName,
-        functionName: 'hash-txn',
+        functionName: "hash-txn",
         functionArgs: [uintCV(BigInt(hashTxnId))],
         network,
         senderAddress,
-      })
-      setHashTxnResult(cvToHex(result))
-      setStatus('Hash loaded.')
+      });
+      setHashTxnResult(cvToHex(result));
+      setStatus("Hash loaded.");
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : 'Failed to fetch hash.'
-      )
+        caught instanceof Error ? caught.message : "Failed to fetch hash.",
+      );
     }
-  }
+  };
 
-  const userAddress = addressForNetwork(networkMode)
+  const userAddress = addressForNetwork(networkMode);
 
   return (
     <div className="page">
@@ -354,11 +356,11 @@ function App() {
         </div>
         <div className="wallet-card">
           <div className="wallet-status">
-            <span className={userData ? 'dot online' : 'dot offline'} />
+            <span className={userData ? "dot online" : "dot offline"} />
             <div>
               <p className="label">Wallet</p>
               <p className="value">
-                {userData ? 'Connected' : 'Not connected'}
+                {userData ? "Connected" : "Not connected"}
               </p>
             </div>
           </div>
@@ -366,15 +368,19 @@ function App() {
             <>
               <div className="wallet-meta">
                 <p className="label">Address ({networkMode})</p>
-                <p className="mono">{userAddress || 'Unavailable'}</p>
+                <p className="mono">{userAddress || "Unavailable"}</p>
               </div>
               <button className="btn secondary" onClick={disconnectWallet}>
                 Disconnect
               </button>
             </>
           ) : (
-            <button className="btn" onClick={connectWallet} disabled={!sessionReady}>
-              {sessionReady ? 'Connect Wallet' : 'Loading Wallet...'}
+            <button
+              className="btn"
+              onClick={connectWallet}
+              disabled={!sessionReady}
+            >
+              {sessionReady ? "Connect Wallet" : "Loading Wallet..."}
             </button>
           )}
         </div>
@@ -400,7 +406,7 @@ function App() {
               <option value="devnet">Devnet</option>
             </select>
           </div>
-          {networkMode === 'devnet' && (
+          {networkMode === "devnet" && (
             <div className="field">
               <label>Devnet API URL</label>
               <input
@@ -481,7 +487,7 @@ function App() {
             <select
               value={submitType}
               onChange={(event) =>
-                setSubmitType(event.target.value as '0' | '1')
+                setSubmitType(event.target.value as "0" | "1")
               }
             >
               <option value="0">STX transfer</option>
@@ -558,7 +564,9 @@ function App() {
             <textarea
               rows={4}
               value={tokenExecuteSignatures}
-              onChange={(event) => setTokenExecuteSignatures(event.target.value)}
+              onChange={(event) =>
+                setTokenExecuteSignatures(event.target.value)
+              }
               placeholder="0x..."
             />
           </div>
@@ -584,9 +592,7 @@ function App() {
           <button className="btn secondary" onClick={handleHashTxn}>
             Fetch Hash
           </button>
-          {hashTxnResult && (
-            <div className="result mono">{hashTxnResult}</div>
-          )}
+          {hashTxnResult && <div className="result mono">{hashTxnResult}</div>}
         </div>
       </section>
 
@@ -597,7 +603,7 @@ function App() {
         </section>
       )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
